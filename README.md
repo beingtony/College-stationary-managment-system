@@ -45,9 +45,6 @@ The **Product Inventory Management System** is a Java-based desktop application 
 2. **User Login**:
    - Registered customers can log in with their email and password to access their account.
    
-3. **Update User Details**:
-   - Customers can update their profile details, including email, phone number, and address.
-   
 ## Database Schema
 The system uses the following tables:
 
@@ -157,7 +154,6 @@ CREATE TABLE Order (
 ### 2. **Product Analytics**:
 Admins can view product-related statistics:
    - **Total number of products**
-   - **Average price of products**
    - **Maximum price of products**
    - **Minimum price of products**
 
@@ -206,14 +202,6 @@ Customers can log in with their email and password to access their account and m
 ### 6. **Update User Details**:
 Customers can update their profile details, such as email, phone number, and address.
 
-### 7. **Add Products to Cart**:
-Customers can add products to their shopping cart, specifying the quantity.
-
-### 8. **Checkout**:
-After adding products to the cart, customers can proceed to checkout, where they review their cart, select a payment method, and complete the purchase.
-
-### 9. **Order Tracking**:
-Customers can view the status of their orders, including shipping and delivery status.
 
 ## How to Use
 
