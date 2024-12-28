@@ -89,7 +89,7 @@ public class Admin_Crud extends JFrame {
 	public Admin_Crud() {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 25, 1300, 800);
+		setBounds(100, 25, 1400, 800);
 		contentPane = new JPanel();
         contentPane.setBackground(new Color(237, 228, 255)); // Light Pink color (RGB: 255, 182, 193)
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -256,8 +256,10 @@ public class Admin_Crud extends JFrame {
 			} 
 
 		});
-
 		
+		
+
+
 		JButton btnUpdate = new JButton("UPDATE");
 		btnUpdate.setForeground(Color.BLACK);
 		btnUpdate.setBackground(new Color(255, 62, 165));
@@ -306,7 +308,8 @@ public class Admin_Crud extends JFrame {
 				}
 			}
 		});
-		
+	
+
 		
 		JButton btnDelete = new JButton("DELETE");
 		btnDelete.setBackground(Color.BLACK);
@@ -330,7 +333,6 @@ public class Admin_Crud extends JFrame {
 				else {
 					String pid2,pname2,price2,category2,quantity2,adid2;
 					try {
-						
 						Class.forName("com.mysql.cj.jdbc.Driver");
 						Connection conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/project","root","root");
 						
@@ -374,61 +376,140 @@ public class Admin_Crud extends JFrame {
 		});
 		
 		
+		// Button: LOAD DATA
 		JButton btnLoad = new JButton("LOAD DATA");
 		btnLoad.setForeground(Color.BLACK);
 		btnLoad.setBackground(new Color(160, 118, 249));
 		btnLoad.setFont(new Font("Helvetica Neue", Font.BOLD, 18));
-		btnLoad.setBounds(677, 645, 170, 56);
+		btnLoad.setBounds(577, 645, 170, 56);
 		contentPane.add(btnLoad);
 		btnLoad.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					Class.forName("com.mysql.cj.jdbc.Driver");
-					Connection conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/project","root","root");
-					
-					PreparedStatement ps = conn.prepareStatement("Select * from Product");
-					ResultSet rs = ps.executeQuery();
-					DefaultTableModel tm = (DefaultTableModel)table.getModel();
-					// The table model manages the data displayed in the table.
-					tm.setRowCount(0);
-					//This line clears any existing data in the JTable represented by table. It sets the number of rows in the table model (tm) 
-					//to zero, effectively removing all previously displayed data.
-					while(rs.next()) {
-					    // Retrieve integer values from the result set and convert them to Integer objects
-					    Integer pid = Integer.valueOf(rs.getInt("P_Id"));
-					    String pname = rs.getString("P_Name");
-					    Integer price = Integer.valueOf(rs.getInt("Price"));
-					    String category = rs.getString("Category");
-					    Integer quantity = Integer.valueOf(rs.getInt("Quantity"));
-					    Integer adminId = Integer.valueOf(rs.getInt("Admin_id"));
-					    
-					    // Create an Object array with converted Integer objects
-					    Object o[] = {pid, pname, price, category, quantity, adminId};
-					    //This line creates an array of objects (o) and assigns values retrieved from the database to each element. The order of elements in the array needs
-					    //to match the order of columns you want to display in the JTable.
-					    
-					    tm.addRow(o);// Add the Object array to the table model
-					}
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+		            Class.forName("com.mysql.cj.jdbc.Driver");
+		            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "root", "root");
 
+		            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Product");
+		            ResultSet rs = ps.executeQuery();
+		            DefaultTableModel tm = (DefaultTableModel) table.getModel();
+		            tm.setRowCount(0);
 
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-			}
+		            while (rs.next()) {
+		                Object o[] = {
+		                    rs.getInt("P_Id"),
+		                    rs.getString("P_Name"),
+		                    rs.getInt("Price"),
+		                    rs.getString("Category"),
+		                    rs.getInt("Quantity"),
+		                    rs.getInt("Admin_id")
+		                };
+		                tm.addRow(o);
+		            }
+
+		            conn.close();
+		        } catch (Exception e2) {
+		            e2.printStackTrace();
+		        }
+		    }
 		});
-		
+
+		// Button: BACK
 		JButton btnBack = new JButton("BACK");
 		btnBack.setForeground(Color.BLACK);
 		btnBack.setFont(new Font("Helvetica Neue", Font.BOLD, 18));
 		btnBack.setBackground(new Color(160, 118, 249));
-		btnBack.setBounds(881, 645, 170, 56);
+		btnBack.setBounds(781, 645, 170, 56);
 		contentPane.add(btnBack);
 		btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new Intro_Page().setVisible(true);
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        new Intro_Page().setVisible(true);
+		    }
 		});
+
+		// Button: SHOW ANALYTICS
+		JButton btnAnalytics = new JButton("SHOW ANALYTICS");
+		btnAnalytics.setForeground(Color.BLACK);
+		btnAnalytics.setFont(new Font("Helvetica Neue", Font.BOLD, 18));
+		btnAnalytics.setBackground(new Color(160, 118, 249));
+		btnAnalytics.setBounds(577, 720, 170, 56); // Positioned below LOAD DATA button
+		contentPane.add(btnAnalytics);
+		btnAnalytics.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+		            Class.forName("com.mysql.cj.jdbc.Driver");
+		            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "root", "root");
+
+		            String query = "SELECT COUNT(*) AS totalProducts, AVG(Price) AS avgPrice, " +
+		                           "MAX(Price) AS maxPrice, MIN(Price) AS minPrice FROM Product";
+
+		            PreparedStatement ps = conn.prepareStatement(query);
+		            ResultSet rs = ps.executeQuery();
+
+		            if (rs.next()) {
+		                int totalProducts = rs.getInt("totalProducts");
+		                double avgPrice = rs.getDouble("avgPrice");
+		                double maxPrice = rs.getDouble("maxPrice");
+		                double minPrice = rs.getDouble("minPrice");
+
+		                String analytics = "Total Products: " + totalProducts + "\n" +
+		                                   "Average Price: " + avgPrice + "\n" +
+		                                   "Highest Price: " + maxPrice + "\n" +
+		                                   "Lowest Price: " + minPrice;
+
+		                JOptionPane.showMessageDialog(null, analytics, "Analytics", JOptionPane.INFORMATION_MESSAGE);
+		            }
+		            conn.close();
+		        } catch (Exception ex) {
+		            JOptionPane.showMessageDialog(null, "Error fetching analytics data!");
+		            ex.printStackTrace();
+		        }
+		    }
+		});
+
+		// Button: SHOW NOTIFICATIONS
+		JButton btnShowNotifications = new JButton("SHOW NOTIFICATIONS");
+		btnShowNotifications.setForeground(Color.BLACK);
+		btnShowNotifications.setFont(new Font("Helvetica Neue", Font.BOLD, 18));
+		btnShowNotifications.setBackground(new Color(160, 118, 249));
+		btnShowNotifications.setBounds(781, 720, 200, 56); // Positioned below BACK button
+		contentPane.add(btnShowNotifications);
+		btnShowNotifications.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+		            Class.forName("com.mysql.cj.jdbc.Driver");
+		            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "root", "root");
+
+		            String query = "SELECT P_Name, Quantity FROM Notifications";
+		            PreparedStatement ps = conn.prepareStatement(query);
+		            ResultSet rs = ps.executeQuery();
+
+		            StringBuilder notifications = new StringBuilder("Low Stock Products:\n\n");
+		            boolean hasNotifications = false;
+
+		            while (rs.next()) {
+		                hasNotifications = true;
+		                String productName = rs.getString("P_Name");
+		                int quantity = rs.getInt("Quantity");
+		                notifications.append("Product: ").append(productName)
+		                             .append(", Quantity: ").append(quantity).append("\n");
+		            }
+
+		            if (hasNotifications) {
+		                JOptionPane.showMessageDialog(null, notifications.toString(), "Notifications", JOptionPane.WARNING_MESSAGE);
+		            } else {
+		                JOptionPane.showMessageDialog(null, "No notifications available.", "Notifications", JOptionPane.INFORMATION_MESSAGE);
+		            }
+
+		            conn.close();
+		        } catch (Exception ex) {
+		            JOptionPane.showMessageDialog(null, "Error fetching notifications!");
+		            ex.printStackTrace();
+		        }
+		    }
+		});
+
 		
 	}
+	
 }
 
