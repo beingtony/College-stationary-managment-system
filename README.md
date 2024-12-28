@@ -1,83 +1,93 @@
-# College Stationary Management System
+Here's the code for the `README.md` file, formatted for Markdown:
+
+```markdown
+# Product Inventory Management System
 
 ## Overview
-The **College Stationary Management System** is a desktop application designed to streamline inventory and administrative tasks in a college store. It leverages Java Swing for the user interface, JDBC for database connectivity, and MySQL for secure and efficient data management. The application ensures operational efficiency, data accuracy, and a seamless user experience.
+This project is designed to manage the inventory of products in a store. It includes features for displaying product data, generating analytics, handling notifications for low stock products, and more. The application is built using Java Swing for the user interface and MySQL for the backend database.
 
 ## Features
-- **Secure User Authentication**: Role-based access for administrators and users.
-- **Efficient Inventory Management**:
-  - Real-time tracking of stock levels.
-  - Automatic alerts for low-stock items.
-- **Optimized CRUD Operations**:
-  - Create, read, update, and delete products, users, and transactions.
-- **Transaction Management**:
-  - Simplified checkout and billing processes.
-  - Detailed transaction history for audits.
-- **User-Friendly Interface**: Intuitive navigation with Java Swing components.
-- **Reporting and Analytics**: Generate insights on stock, sales, and user activity.
-
-## Technology Stack
-- **Frontend**: Java Swing
-- **Backend**: JDBC
-- **Database**: MySQL
-
-## Achievements
-1. **Efficiency in Operations**:
-   - Reduced transaction processing time by 80%, from 5 minutes manually to 1 minute using the system.
-2. **Data Accuracy**:
-   - Lowered error rate from 10% to 1% in inventory management, achieving a 90% reduction.
-3. **Scalability**:
-   - Enabled up to 100 concurrent users with no performance degradation.
-4. **Cost Savings**:
-   - Reduced operational costs by 80%, eliminating the need for manual labor and paper use.
-
-## Database Schema
-- **Users Table**: Stores user information and roles.
-- **Products Table**: Tracks inventory details.
-- **Transactions Table**: Logs transaction records.
-- **Admin Logs Table**: Records administrative changes.
+- **Load Data**: Load product data from the database into the table.
+- **Show Analytics**: Display analytics on products, including total products, average price, maximum price, and minimum price.
+- **Show Notifications**: Display notifications about products that have a stock quantity of less than 10.
+- **Back**: Navigate back to the introductory page.
 
 ## Prerequisites
-1. Java Development Kit (JDK) 8 or above.
-2. MySQL Server.
-3. Java IDE (e.g., IntelliJ IDEA, Eclipse).
+Ensure that the following software is installed:
+- Java Development Kit (JDK)
+- MySQL Database Server
+- JDBC Driver for MySQL
 
-## Installation and Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/college-stationary-management.git
-   ```
-2. Open the project in your Java IDE.
-3. Set up the MySQL database:
-   - Create a new database: `college_stationary_db`
-   - Import the `database_schema.sql` file from the repository.
-4. Configure the database connection in the application:
-   - Update `dbConfig.java` with your MySQL credentials.
-5. Build and run the application:
-   ```bash
-   javac Main.java
-   java Main
-   ```
+## Database Schema
+The project uses the following MySQL tables:
+- **Product**: Contains product details like `P_Id`, `P_Name`, `Price`, `Category`, `Quantity`, and `Admin_id`.
+- **Notifications**: Contains low stock products with `P_Name` and `Quantity`.
 
-## Usage
-- **Admin**:
-  - Manage users, inventory, and transactions.
-  - View reports and logs.
-- **User**:
-  - Purchase items from the store.
-  - View transaction history.
+## Application Flow
+1. **Load Data Button**:
+   - This button retrieves all the products from the `Product` table in the database and displays them in a table.
+   
+2. **Show Analytics Button**:
+   - This button displays the following product analytics:
+     - Total number of products
+     - Average product price
+     - Highest and lowest product price
+   - The analytics are fetched from the `Product` table.
 
-## Future Enhancements
-- **Cloud Integration**: Migrate to cloud-based databases for scalability.
-- **Mobile App**: Develop a mobile app for on-the-go access.
-- **Advanced Analytics**: Incorporate machine learning for sales forecasting.
+3. **Show Notifications Button**:
+   - This button retrieves the products with quantities less than 10 from the `Notifications` table and displays them in a notification format.
+   
+4. **Back Button**:
+   - This button allows the user to navigate back to the introductory page.
 
-## Contributing
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes and submit a pull request.
+## Code Explanation
+### 1. **`btnLoad`**:
+   - Fetches product data from the `Product` table and displays it in the table.
+   
+### 2. **`btnAnalytics`**:
+   - Fetches and displays product analytics:
+     - Total products
+     - Average price
+     - Maximum and minimum prices
+     
+### 3. **`btnShowNotifications`**:
+   - Fetches and displays products with low stock from the `Notifications` table.
+   
+### 4. **`btnBack`**:
+   - Navigates the user back to the introduction page.
 
+## How to Run
+1. Clone the repository.
+2. Set up a MySQL database with the necessary tables (`Product`, `Notifications`).
+3. Ensure the JDBC driver is set up in your project.
+4. Compile and run the project in your Java IDE (e.g., IntelliJ IDEA, Eclipse).
 
+```bash
+javac ProductInventoryManagement.java
+java ProductInventoryManagement
+```
 
----
+## Sample Output
+### Product Data
+The table will display product details such as:
+| P_Id | P_Name | Price | Category | Quantity | Admin_id |
+|------|--------|-------|----------|----------|----------|
+| 1    | Item A | 100   | Electronics | 50      | 1        |
+
+### Analytics
+A dialog box will show:
+```
+Total Products: 100
+Average Price: 150.5
+Highest Price: 300
+Lowest Price: 50
+```
+
+### Notifications
+A dialog box will show:
+```
+Low Stock Products:
+
+Product: Item A, Quantity: 5
+Product: Item B, Quantity: 3
+```
