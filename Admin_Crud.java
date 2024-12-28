@@ -427,44 +427,87 @@ public class Admin_Crud extends JFrame {
 		});
 
 		// Button: SHOW ANALYTICS
-		JButton btnAnalytics = new JButton("SHOW ANALYTICS");
-		btnAnalytics.setForeground(Color.BLACK);
-		btnAnalytics.setFont(new Font("Helvetica Neue", Font.BOLD, 18));
-		btnAnalytics.setBackground(new Color(160, 118, 249));
-		btnAnalytics.setBounds(577, 720, 170, 56); // Positioned below LOAD DATA button
-		contentPane.add(btnAnalytics);
-		btnAnalytics.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-		            Class.forName("com.mysql.cj.jdbc.Driver");
-		            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "root", "root");
+		// JButton for showing analytics
+JButton btnAnalytics = new JButton("SHOW ANALYTICS");
+btnAnalytics.setForeground(Color.BLACK);
+btnAnalytics.setFont(new Font("Helvetica Neue", Font.BOLD, 18));
+btnAnalytics.setBackground(new Color(160, 118, 249));
+btnAnalytics.setBounds(577, 720, 170, 56); // Positioned below LOAD DATA button
+contentPane.add(btnAnalytics);
 
-		            String query = "SELECT COUNT(*) AS totalProducts, AVG(Price) AS avgPrice, " +
-		                           "MAX(Price) AS maxPrice, MIN(Price) AS minPrice FROM Product";
+// ActionListener for analytics button
+btnAnalytics.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        try {
+            // Step 1: Register JDBC Driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-		            PreparedStatement ps = conn.prepareStatement(query);
-		            ResultSet rs = ps.executeQuery();
+            // Step 2: Open a connection to the database
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "root", "root");
 
-		            if (rs.next()) {
-		                int totalProducts = rs.getInt("totalProducts");
-		                double avgPrice = rs.getDouble("avgPrice");
-		                double maxPrice = rs.getDouble("maxPrice");
-		                double minPrice = rs.getDouble("minPrice");
+            // Step 3: SQL query to fetch analytics for products sold in the last 30 days
+            String query = "SELECT P.P_Name, SUM(T.Quantity) AS totalQuantity " +
+                           "FROM Product P " +
+                           "JOIN Transaction T ON P.P_ID = T.P_ID " +
+                           "WHERE T.Date >= CURDATE() - INTERVAL 30 DAY " +
+                           "GROUP BY P.P_Name " +
+                           "ORDER BY totalQuantity DESC";
 
-		                String analytics = "Total Products: " + totalProducts + "\n" +
-		                                   "Average Price: " + avgPrice + "\n" +
-		                                   "Highest Price: " + maxPrice + "\n" +
-		                                   "Lowest Price: " + minPrice;
+            // Step 4: Prepare the statement and execute the query
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
 
-		                JOptionPane.showMessageDialog(null, analytics, "Analytics", JOptionPane.INFORMATION_MESSAGE);
-		            }
-		            conn.close();
-		        } catch (Exception ex) {
-		            JOptionPane.showMessageDialog(null, "Error fetching analytics data!");
-		            ex.printStackTrace();
-		        }
-		    }
-		});
+            // Step 5: Process the result set and find the most and least sold products
+            StringBuilder analytics = new StringBuilder("Product Sales in the Last 30 Days:\n\n");
+            int mostSoldQuantity = 0;
+            int leastSoldQuantity = Integer.MAX_VALUE;
+            String mostSoldProduct = "";
+            String leastSoldProduct = "";
+            boolean hasData = false;
+
+            while (rs.next()) {
+                hasData = true;
+                String productName = rs.getString("P_Name");
+                int quantitySold = rs.getInt("totalQuantity");
+
+                // Append every product and its quantity to the output
+                analytics.append("Product: ").append(productName)
+                         .append(", Quantity Sold: ").append(quantitySold).append("\n");
+
+                // Track the most and least sold products
+                if (quantitySold > mostSoldQuantity) {
+                    mostSoldQuantity = quantitySold;
+                    mostSoldProduct = productName;
+                }
+                if (quantitySold < leastSoldQuantity) {
+                    leastSoldQuantity = quantitySold;
+                    leastSoldProduct = productName;
+                }
+            }
+
+            // If there is data, display the most and least sold products along with quantities
+            if (hasData) {
+                analytics.append("\nMost Sold Product: ").append(mostSoldProduct)
+                         .append(" with ").append(mostSoldQuantity).append(" sales.\n");
+                analytics.append("Least Sold Product: ").append(leastSoldProduct)
+                         .append(" with ").append(leastSoldQuantity).append(" sales.\n");
+
+                // Step 6: Show analytics in a message dialog
+                JOptionPane.showMessageDialog(null, analytics.toString(), "Product Sales Analytics", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "No product sales data for the last 30 days.", "No Data", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // Step 7: Close the connection
+            conn.close();
+        } catch (Exception ex) {
+            // Step 8: Handle any exceptions (errors)
+            JOptionPane.showMessageDialog(null, "Error fetching analytics data!");
+            ex.printStackTrace();
+        }
+    }
+});
+
 
 		// Button: SHOW NOTIFICATIONS
 		JButton btnShowNotifications = new JButton("SHOW NOTIFICATIONS");
