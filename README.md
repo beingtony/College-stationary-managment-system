@@ -50,13 +50,11 @@ The system uses the following tables:
 
 ### 1. **Admin Table**
 Stores admin user details.
-```sql
 CREATE TABLE Admin (
     Admin_id INT PRIMARY KEY,
     Admin_name VARCHAR(255),
     Password VARCHAR(255)
 );
-```
 
 ### 2. **Product Table**
 Stores product details.
